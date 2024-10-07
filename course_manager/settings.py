@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'core'
 ]
 
@@ -79,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'course_manager_db',
         'USER': 'root',
-        'PASSWORD': 'tjdus6957',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
     }

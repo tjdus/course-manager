@@ -17,6 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from core.views.course import CourseListAPIView, CourseDetailAPIView
+from core.views.department import DepartmentListAPIView, DepartmentDetailAPIView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('course', CourseListAPIView.as_view(), name='course'),
+    path('course/<int:pk>/', CourseDetailAPIView.as_view(), name='course'),
+
+    path('department', DepartmentListAPIView.as_view(), name='department'),
+
+    path('department/<int:pk>/', DepartmentDetailAPIView.as_view(), name='department'),
 ]
