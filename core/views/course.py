@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.common.decorators import has_permission
 from core.models import Course
 from core.serializers.course import CourseSerializer
 
@@ -15,6 +16,8 @@ class CourseListAPIView(APIView):
         qs = self.get_queryset()
         serializer = CourseSerializer(qs, many=True)
         return Response(serializer.data)
+
+    @has_permission('Create Lecture')
     def post(self, request, *args, **kwargs):
         serializer = CourseSerializer(data=request.data)
         if serializer.is_valid():
