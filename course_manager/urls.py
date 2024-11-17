@@ -26,6 +26,7 @@ from core.views.login import LoginView
 from core.views.professor import ProfessorListAPIView, ProfessorDetailAPIView
 from core.views.signup import StudentSignupView, ProfessorSignupView
 from core.views.student import StudentListView, StudentDetailView
+from core.views.enrollment import EnrollmentListView, EnrollmentDetailView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -59,6 +60,9 @@ urlpatterns = [
 
     path('student', StudentListView.as_view(), name='student'),
     path('student/<int:pk>', StudentDetailView.as_view(), name='student'),
+
+    path('enrollment', EnrollmentDetailView.as_view(), name='enrollment'),
+    path('enrollment/<int:pk>', EnrollmentDetailView.as_view(), name='enrollment'),
 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
