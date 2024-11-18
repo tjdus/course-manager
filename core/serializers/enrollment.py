@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import Enrollment
-from .serializers import EnrollmentSerializer
+from core.models import Enrollment
+#from .serializers import EnrollmentSerializer
 
 
 class EnrollmentSerializer(serializers.ModelSerializer):

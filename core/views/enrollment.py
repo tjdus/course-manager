@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Enrollment
-from .serializers import EnrollmentSerializer
+from core.models import Enrollment
+from core.serializers.enrollment import EnrollmentSerializer
 
 class EnrollmentListView(APIView):
     """

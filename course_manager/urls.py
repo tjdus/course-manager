@@ -61,7 +61,7 @@ urlpatterns = [
     path('student', StudentListView.as_view(), name='student'),
     path('student/<int:pk>', StudentDetailView.as_view(), name='student'),
 
-    path('enrollment', EnrollmentDetailView.as_view(), name='enrollment'),
+    path('enrollment', EnrollmentListView.as_view(), name='enrollment'),
     path('enrollment/<int:pk>', EnrollmentDetailView.as_view(), name='enrollment'),
 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

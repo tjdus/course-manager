@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "==4.2"
+djangorestframework-simplejwt = "*"
+django = "*"
 mysqlclient = "*"
 djangorestframework = "*"
-djangorestframework-simplejwt = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
