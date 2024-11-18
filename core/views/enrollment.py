@@ -1,20 +1,83 @@
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.db import transaction, IntegrityError
 
+from core.models import Student, Course
+from core.models.enrollment import Enrollment
+from core.serializers.enrollment import EnrollmentRequestSerializer
+from serializers import EnrollmentSerializer
+from drf_yasg.utils import swagger_auto_schema
 
 class EnrollmentListView(APIView):
-    #TODO:
+    def get_queryset(self):
+        return Enrollment.objects.all()
 
-    # 수강 신청 조회
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        student = Student.objects.get(user=user)
+        enrollment = self.get_queryset().filter(student=student)
 
-    # 수강 신청 생성
-    pass
+        serializer = EnrollmentSerializer(enrollment, many=True)
+        return Response(serializer.data)
 
+    @swagger_auto_schema(
+        request_body=EnrollmentRequestSerializer,
+        responses={
+            201: EnrollmentSerializer,
+            400: "Bad Request",
+            404: "Not Found",
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        with transaction.atomic():
+            user = request.user
+            student = Student.objects.get(user=user)
+            serializer = EnrollmentRequestSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            course_id = serializer.validated_data['course_id']
+            try:
+                course = Course.objects.get(id=course_id)
+            except Course.DoesNotExist:
+                return Response({"error": "Course not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                enrollment = Enrollment.objects.create(course=course, student=student)
+            except IntegrityError:
+                return Response({"error": "You are already enrolled in this course."}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer = EnrollmentSerializer(enrollment)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class EnrollmentDetailView(APIView):
-    #TODO:
 
-    # 수강 신청 조회
+    def get_queryset(self):
+        return Enrollment.objects.all()
 
-    # 수강 신청 삭제
-    pass
+    def get_object(self, pk):
+        qs = self.get_queryset().get(pk=pk)
+        return qs
+
+    def get(self, request, pk, *args, **kwargs):
+        user = request.user
+        student = Student.objects.get(user=user)
+        enrollment = self.get_object(pk)
+
+        if enrollment.student != student:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = EnrollmentSerializer(enrollment)
+        return Response(serializer.data)
+
+    def delete(self, request, pk, *args, **kwargs):
+        user = request.user
+        student = Student.objects.get(user=user)
+        enrollment = self.get_object(pk)
+        if enrollment.student != student:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        enrollment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
