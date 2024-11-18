@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.models import Student, Course
+from core.models import Student, Course, CompletedCourse
 from core.models.enrollment import Enrollment
 from core.serializers.enrollment import EnrollmentSerializer, EnrollmentRequestSerializer
 
@@ -41,6 +41,15 @@ class EnrollmentListView(APIView):
                 course = Course.objects.get(id=course_id)
             except Course.DoesNotExist:
                 return Response({"error": "Course not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+            prerequisite = course.prerequisite
+            if prerequisite:
+                completed_courses = CompletedCourse.objects.filter(student=student, course=prerequisite)
+                if not completed_courses.exists():
+                    return Response(
+                        {"error": f"You must complete the prerequisite course: {prerequisite.course_name}."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
             try:
                 enrollment = Enrollment.objects.create(course=course, student=student)

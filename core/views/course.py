@@ -1,4 +1,5 @@
 from django.http import Http404
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,6 +18,13 @@ class CourseListAPIView(APIView):
         serializer = CourseSerializer(qs, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        request_body=CourseSerializer,
+        responses={
+            201: CourseSerializer,
+            400: "Bad Request"
+        },
+    )
     @has_permission('Create Lecture')
     def post(self, request, *args, **kwargs):
         serializer = CourseSerializer(data=request.data)
