@@ -16,3 +16,5 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
 class EnrollmentRequestSerializer(serializers.Serializer):
     course_id = serializers.IntegerField(required=True)
+    semester_id = serializers.IntegerField(required=True)
+

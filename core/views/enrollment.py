@@ -4,9 +4,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.models import Student, Course, CompletedCourse
+from core.models import Student, Course, CompletedCourse, Semester
 from core.models.enrollment import Enrollment
 from core.serializers.enrollment import EnrollmentSerializer, EnrollmentRequestSerializer
+from core.services.student_service import StudentEnrollmentService
 
 
 class EnrollmentListView(APIView):
@@ -50,9 +51,19 @@ class EnrollmentListView(APIView):
                         {"error": f"You must complete the prerequisite course: {prerequisite.course_name}."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
+            try:
+                semester_id = serializer.validated_data['semester_id']
+                semester = Semester.objects.get(id=semester_id)
+            except Semester.DoesNotExist:
+                return Response({"error": "Semester not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+            max_credit = StudentEnrollmentService.calculate_credit_limit(student, semester)
+            total_credit = StudentEnrollmentService.calculate_credits(student, semester)
+            if max_credit < total_credit + course.credit:
+                return Response({"error": "Credit limit exceeded."}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                enrollment = Enrollment.objects.create(course=course, student=student)
+                enrollment = Enrollment.objects.create(course=course, student=student, semester=semester)
             except IntegrityError:
                 return Response({"error": "You are already enrolled in this course."}, status=status.HTTP_400_BAD_REQUEST)
 

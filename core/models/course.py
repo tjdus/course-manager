@@ -11,6 +11,7 @@ class Course(models.Model):
         on_delete=models.SET_NULL,
         related_name="dependent_courses"
     )
+    credit = models.IntegerField(default=3)
 
 
     class Meta:

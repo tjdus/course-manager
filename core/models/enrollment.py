@@ -5,6 +5,7 @@ class Enrollment(models.Model):
     student = models.ForeignKey('core.Student', on_delete=models.PROTECT)
     course = models.ForeignKey('core.Course', on_delete=models.PROTECT)
     enroll_date = models.DateField(auto_now_add=True)
+    semester = models.ForeignKey('core.Semester', on_delete=models.PROTECT)
 
     class Meta:
         db_table = 'enrollment'
