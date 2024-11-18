@@ -23,6 +23,7 @@ from rest_framework import permissions
 from core.views.course import CourseListAPIView, CourseDetailAPIView
 from core.views.department import DepartmentListAPIView, DepartmentDetailAPIView
 from core.views.enrollment import EnrollmentListView, EnrollmentDetailView
+from core.views.gpa import GPAView
 from core.views.login import LoginView
 from core.views.professor import ProfessorListAPIView, ProfessorDetailAPIView
 from core.views.signup import StudentSignupView, ProfessorSignupView
@@ -62,6 +63,7 @@ urlpatterns = [
     path('student/<int:pk>', StudentDetailView.as_view(), name='student'),
     path('enrollment', EnrollmentListView.as_view(), name='enrollment'),
     path('enrollment/<int:pk>', EnrollmentDetailView.as_view(), name='enrollment'),
+    path('gpa', GPAView.as_view()),
 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
