@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from core.models import Student, Course, CompletedCourse, Semester
 from core.models.enrollment import Enrollment
 from core.serializers.enrollment import EnrollmentSerializer, EnrollmentRequestSerializer
-from core.services.student_service import StudentEnrollmentService
 
 
 class EnrollmentListView(APIView):
