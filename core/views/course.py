@@ -1,20 +1,43 @@
 from django.http import Http404
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.common.decorators import has_permission
+from core.filtersets.course_filter import CourseFilter
 from core.models import Course
 from core.serializers.course import CourseSerializer
 
 
 class CourseListAPIView(APIView):
+    filterset_class = CourseFilter
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+    search_fields = ['course_name']
+
+    ordering_fields = ['id', 'course_name']
+
     def get_queryset(self):
         queryset = Course.objects.select_related("department", "professor").all()
         return queryset
+
+    def filter_queryset(self, queryset):
+        """
+        Given a queryset, filter it with whichever filter backend is in use.
+        You are unlikely to want to override this method, although you may need
+        to call it either from a list view, or from a custom `get_object`
+        method if you want to apply the configured filtering backend to the
+        default queryset.
+        """
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+        return queryset
+
     def get(self, request):
-        qs = self.get_queryset()
+        qs = self.filter_queryset(self.get_queryset())
         serializer = CourseSerializer(qs, many=True)
         return Response(serializer.data)
 

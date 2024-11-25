@@ -8,6 +8,9 @@ django = "==4.2"
 mysqlclient = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
+python-dotenv = "*"
+drf-yasg = "*"
+django-filter = "*"
 
 [dev-packages]
 
