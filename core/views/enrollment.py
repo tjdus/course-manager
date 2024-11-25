@@ -57,11 +57,6 @@ class EnrollmentListView(APIView):
             except Semester.DoesNotExist:
                 return Response({"error": "Semester not found."}, status=status.HTTP_400_BAD_REQUEST)
 
-            max_credit = StudentEnrollmentService.calculate_credit_limit(student, semester)
-            total_credit = StudentEnrollmentService.calculate_credits(student, semester)
-            if max_credit < total_credit + course.credit:
-                return Response({"error": "Credit limit exceeded."}, status=status.HTTP_400_BAD_REQUEST)
-
             try:
                 enrollment = Enrollment.objects.create(course=course, student=student, semester=semester)
             except IntegrityError:
